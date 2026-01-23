@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0" />
+        <title>Naomi Tomoyoy | Linktree</title>
+
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Tailwind CSS Config -->
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            purpleSoft: "#c3a6ff",
+                            pinkSoft: "#ffb7d5",
+                            textPurple: "#3a2e4f",
+                        },
+                        animation: {
+                            float: "float 3s ease-in-out infinite",
+                        },
+                        keyframes: {
+                            float: {
+                                "0%, 100%": { transform: "translateY(0)" },
+                                "50%": { transform: "translateY(-6px)" },
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+
+        <!-- Font -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+            rel="stylesheet" />
+
+        <!-- Font Awesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+        <style>
+            body {
+                font-family: "Poppins", sans-serif;
+                -webkit-user-select: none; /* Safari */
+                -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* IE10+ */
+                user-select: none; /* Standard syntax */
+            }
+        </style>
+    </head>
+
+    <body
+        oncontextmenu="return false;"
+        class="min-h-screen flex items-center justify-center bg-gradient-to-b from-purpleSoft to-pinkSoft text-textPurple">
+        <main class="w-full max-w-[420px] px-5 py-8 text-center">
+            <!-- Avatar -->
+            <div
+                class="w-[120px] h-[120px] mx-auto mb-4 rounded-full bg-white overflow-hidden shadow-[0_0_25px_rgba(255,255,255,0.6)] animate-float">
+                <img
+                    src="./tomoyoy.png"
+                    alt="Naomi Tomoyoy"
+                    class="w-full h-full object-cover" />
+            </div>
+
+            <!-- Name -->
+            <h1 class="text-2xl font-semibold mb-1">Naomi Tomoyoy 💜</h1>
+
+            <!-- Subtitle -->
+            <p class="text-sm opacity-90 mb-7 leading-relaxed">
+                Haiii~ aku temen online kamu ✨<br />
+                nongkrong, nyanyi, dan ketawa bareng~
+            </p>
+
+            <!-- Links -->
+            <div
+                id="link-list"
+                class="flex flex-col gap-4"></div>
+
+            <!-- Footer -->
+            <div class="mt-9 text-xs opacity-80">
+                Makasih ya udah mampir 💜<br />
+                kalau kangen… balik lagi aja~ <br />
+                <span class="text-[6px]">Created By STUNT</span>
+            </div>
+        </main>
+
+        <script>
+            document.addEventListener("contextmenu", (e) => e.preventDefault());
+            document.onkeydown = (e) => {
+                if (
+                    event.keyCode === 123 || // F12
+                    (e.ctrlKey &&
+                        e.shiftKey &&
+                        e.keyCode === "I".charCodeAt(0)) ||
+                    (e.ctrlKey &&
+                        e.shiftKey &&
+                        e.keyCode === "J".charCodeAt(0)) ||
+                    (e.ctrlKey && e.keyCode === "U".charCodeAt(0))
+                ) {
+                    return false;
+                }
+            };
+
+            const links = [
+                {
+                    name: "Saweria",
+                    url: "https://saweria.co/naomitomoyoy",
+                    icon: "fa-solid fa-heart",
+                },
+                {
+                    name: "Trakteer",
+                    url: "https://trakteer.id/tomoyoy",
+                    icon: "fa-solid fa-mug-hot",
+                },
+                {
+                    name: "Discord",
+                    url: "https://discord.gg/Z3AnXVUuak",
+                    icon: "fa-brands fa-discord",
+                },
+                {
+                    name: "Instagram",
+                    url: "https://www.instagram.com/naomi_tomoyoy",
+                    icon: "fa-brands fa-instagram",
+                },
+                {
+                    name: "YouTube",
+                    url: "https://www.youtube.com/@tomoyoy_oy",
+                    icon: "fa-brands fa-youtube",
+                },
+                {
+                    name: "Spotify",
+                    url: "https://open.spotify.com/user/31oqoygzqrxjco3apycvxayazdkq?si=8744f287631d450a&nd=1&dlsi=27599330d90b4406",
+                    icon: "fa-brands fa-spotify",
+                },
+                {
+                    name: "TikTok",
+                    url: "https://www.tiktok.com/@moyoy.oy",
+                    icon: "fa-brands fa-tiktok",
+                },
+                {
+                    name: "SoundCloud",
+                    url: "https://soundcloud.com/naomi-tomoyoy",
+                    icon: "fa-brands fa-soundcloud",
+                },
+                {
+                    name: "X (Twitter)",
+                    url: "https://x.com/naothara_sella",
+                    icon: "fa-brands fa-x-twitter",
+                },
+            ];
+
+            const container = document.getElementById("link-list");
+
+            links.forEach((item) => {
+                const a = document.createElement("a");
+                a.href = item.url;
+                a.target = "_blank";
+                a.className = `
+        flex items-center gap-4 px-5 py-3
+        rounded-full bg-white/90
+        font-medium text-textPurple
+        shadow-lg shadow-purple-400/30
+        transition-all duration-500
+        hover:-translate-y-1 hover:scale-[1.02]
+        hover:shadow-[0_0_25px_rgba(255,255,255,0.9)]
+      `;
+
+                a.innerHTML = `
+        <i class="${item.icon} text-lg w-5"></i>
+        <span>${item.name}</span>
+      `;
+
+                container.appendChild(a);
+            });
+        </script>
+    </body>
+</html>
