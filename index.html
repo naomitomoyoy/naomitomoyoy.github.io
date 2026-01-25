@@ -321,19 +321,27 @@
         </main>
 
         <script>
-            // bubble texts
             const bubble = document.querySelector(".bubble");
+
             const bubbletexts = [
                 "Welcome Semuanya 🧸💜",
                 "aku seneng kalian mampir ✨",
                 "jangan lupa senyum ya~ 💖",
             ];
 
-            bubbletexts.forEach((text, i) => {
-                setTimeout(() => {
-                    bubble.textContent = text;
-                }, i * 12000);
-            });
+            let bubbleIndex = 0;
+
+            function cycleBubbleText() {
+                bubble.textContent = bubbletexts[bubbleIndex];
+                bubbleIndex = (bubbleIndex + 1) % bubbletexts.length;
+            }
+
+            // pertama kali muncul
+            cycleBubbleText();
+
+            // ganti teks setiap 6 detik (sesuai animasi bubbleCute)
+            setInterval(cycleBubbleText, 6000);
+
             // Blinking eyes
             function randomBlink() {
                 const eyes = document.querySelectorAll(".eye");
