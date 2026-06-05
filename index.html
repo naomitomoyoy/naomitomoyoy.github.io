@@ -1,0 +1,1465 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Naomi Tomoyoy - Artist, Vtuber & Content Creator. Lihat galeri artwork, komisi L2D, rigging, illustration, dan thumbnails." />
+        <meta
+            name="keywords"
+            content="Naomi Tomoyoy, artist, vtuber, L2D commission, rigging, illustration, thumbnails, gallery art" />
+        <meta
+            name="author"
+            content="Naomi Tomoyoy" />
+        <meta
+            name="theme-color"
+            content="#0a0a0a" />
+        <meta
+            property="og:title"
+            content="Naomi Tomoyoy | Artist & Vtuber" />
+        <meta
+            property="og:description"
+            content="Lihat galeri artwork, komisi L2D, rigging, illustration, dan thumbnails." />
+        <meta
+            property="og:type"
+            content="website" />
+        <meta
+            property="og:image"
+            content="assets/images/avatar/tomoyoy.png" />
+        <title>Naomi Tomoyoy | Artist & Vtuber</title>
+        <link
+            rel="icon"
+            type="image/x-icon"
+            href="assets/icons/tomoyoy.ico" />
+        <link
+            rel="preconnect"
+            href="https://fonts.googleapis.com" />
+        <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            purple: {
+                                soft: "#c3a6ff",
+                                deep: "#6b4fcf",
+                                dark: "#3a2e4f",
+                            },
+                            pink: { soft: "#ffb7d5", deep: "#e879a8" },
+                        },
+                        fontFamily: {
+                            heading: ["Baloo 2", "cursive"],
+                            body: ["Poppins", "sans-serif"],
+                        },
+                    },
+                },
+            };
+        </script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+            defer></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"
+            defer></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                font-family: "Poppins", sans-serif;
+                background: #0a0a0a;
+                color: #e9ecef;
+                overflow-x: hidden;
+            }
+            ::selection {
+                background: #c3a6ff;
+                color: #3a2e4f;
+            }
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #212529;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: linear-gradient(180deg, #c3a6ff, #ffb7d5);
+                border-radius: 3px;
+            }
+
+            #three-canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .loader {
+                position: fixed;
+                inset: 0;
+                background: #0a0a0a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                transition:
+                    opacity 0.6s ease,
+                    visibility 0.6s ease;
+            }
+            .loader.hidden {
+                opacity: 0;
+                visibility: hidden;
+            }
+            .loader-bear {
+                width: 60px;
+                height: 60px;
+                animation: bounce 1s ease-in-out infinite;
+            }
+            @keyframes bounce {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-15px);
+                }
+            }
+
+            .cursor {
+                width: 20px;
+                height: 20px;
+                border: 2px solid #c3a6ff;
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9998;
+                transition:
+                    transform 0.1s ease,
+                    width 0.3s ease,
+                    height 0.3s ease;
+                transform: translate(-50%, -50%);
+            }
+            .cursor.hover {
+                width: 50px;
+                height: 50px;
+                background: rgba(195, 166, 255, 0.1);
+            }
+
+            .parallax-layer {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                will-change: transform;
+            }
+            .parallax-1 {
+                opacity: 0.08;
+                background: radial-gradient(
+                    circle at 20% 50%,
+                    #c3a6ff 0%,
+                    transparent 50%
+                );
+            }
+            .parallax-2 {
+                opacity: 0.06;
+                background: radial-gradient(
+                    circle at 80% 20%,
+                    #ffb7d5 0%,
+                    transparent 50%
+                );
+            }
+            .parallax-3 {
+                opacity: 0.04;
+                background: radial-gradient(
+                    circle at 50% 80%,
+                    #6b4fcf 0%,
+                    transparent 50%
+                );
+            }
+
+            .gallery-item {
+                aspect-ratio: 1;
+                overflow: hidden;
+                border-radius: 8px;
+                cursor: pointer;
+                position: relative;
+                will-change: transform;
+            }
+            .gallery-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.6s ease;
+            }
+            .gallery-item:hover img {
+                transform: scale(1.08);
+            }
+            .gallery-overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    180deg,
+                    transparent 50%,
+                    rgba(10, 10, 10, 0.85) 100%
+                );
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                display: flex;
+                align-items: flex-end;
+                padding: 1.5rem;
+            }
+            .gallery-item:hover .gallery-overlay {
+                opacity: 1;
+            }
+
+            .lightbox {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.4s ease;
+            }
+            .lightbox.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            .lightbox img {
+                max-width: 90%;
+                max-height: 90vh;
+                border-radius: 8px;
+            }
+            .lightbox-close {
+                position: absolute;
+                top: 2rem;
+                right: 2rem;
+                font-size: 2rem;
+                color: white;
+                cursor: pointer;
+            }
+            .lightbox-close:hover {
+                color: #c3a6ff;
+            }
+
+            @media (max-width: 768px) {
+                .cursor {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Loader -->
+        <div class="loader">
+            <div class="text-center">
+                <svg
+                    class="loader-bear mx-auto"
+                    viewBox="0 0 100 100">
+                    <circle
+                        cx="30"
+                        cy="25"
+                        r="12"
+                        fill="#c3a6ff" />
+                    <circle
+                        cx="70"
+                        cy="25"
+                        r="12"
+                        fill="#c3a6ff" />
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="28"
+                        fill="#e8e0f0" />
+                    <circle
+                        cx="38"
+                        cy="45"
+                        r="4"
+                        fill="#3a2e4f" />
+                    <circle
+                        cx="62"
+                        cy="45"
+                        r="4"
+                        fill="#3a2e4f" />
+                    <ellipse
+                        cx="50"
+                        cy="55"
+                        rx="6"
+                        ry="4"
+                        fill="#3a2e4f" />
+                </svg>
+                <p class="text-purple-soft font-heading mt-4">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Cursor -->
+        <div class="cursor hidden md:block"></div>
+
+        <!-- Navigation -->
+        <nav
+            class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300"
+            id="navbar">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <a
+                    href="#"
+                    class="flex items-center gap-3">
+                    <img
+                        src="assets/images/avatar/tomoyoy.png"
+                        alt="Naomi"
+                        class="w-10 h-10 rounded-full border-2 border-purple-soft" />
+                    <span class="font-heading text-xl font-bold text-white"
+                        >Naomi</span
+                    >
+                </a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a
+                        href="#home"
+                        class="text-gray-300 hover:text-white transition text-sm font-medium"
+                        >Home</a
+                    >
+                    <a
+                        href="#about"
+                        class="text-gray-300 hover:text-white transition text-sm font-medium"
+                        >About</a
+                    >
+                    <a
+                        href="#gallery"
+                        class="text-gray-300 hover:text-white transition text-sm font-medium"
+                        >Gallery</a
+                    >
+                    <a
+                        href="#commission"
+                        class="text-gray-300 hover:text-white transition text-sm font-medium"
+                        >Commission</a
+                    >
+                    <a
+                        href="#links"
+                        class="text-gray-300 hover:text-white transition text-sm font-medium"
+                        >Links</a
+                    >
+                </div>
+                <button
+                    class="md:hidden text-white text-2xl"
+                    onclick="
+                        document
+                            .querySelector('.mobile-menu')
+                            .classList.toggle('hidden')
+                    ">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+            <div
+                class="mobile-menu hidden md:hidden mt-4 bg-gray-900/95 backdrop-blur rounded-lg p-4">
+                <a
+                    href="#home"
+                    class="block py-2 text-gray-300 hover:text-white"
+                    >Home</a
+                >
+                <a
+                    href="#about"
+                    class="block py-2 text-gray-300 hover:text-white"
+                    >About</a
+                >
+                <a
+                    href="#gallery"
+                    class="block py-2 text-gray-300 hover:text-white"
+                    >Gallery</a
+                >
+                <a
+                    href="#commission"
+                    class="block py-2 text-gray-300 hover:text-white"
+                    >Commission</a
+                >
+                <a
+                    href="#links"
+                    class="block py-2 text-gray-300 hover:text-white"
+                    >Links</a
+                >
+            </div>
+        </nav>
+
+        <main>
+            <!-- Hero -->
+            <section
+                id="home"
+                class="relative min-h-screen flex items-center px-8 md:px-16 lg:px-24 overflow-hidden">
+                <canvas id="three-canvas"></canvas>
+                <div class="parallax-layer parallax-1"></div>
+                <div class="parallax-layer parallax-2"></div>
+                <div class="parallax-layer parallax-3"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <h1
+                        class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+                        Haiii~ Aku
+                        <span
+                            class="bg-gradient-to-r from-purple-soft to-pink-soft bg-clip-text text-transparent"
+                            >Naomi Tomoyoy</span
+                        >
+                        💜
+                    </h1>
+                    <p
+                        class="text-gray-300 text-lg md:text-xl mb-8 leading-relaxed">
+                        Artist, Vtuber & Content Creator.<br />
+                        Aku temen online kamu untuk nongkrong, nyanyi, dan
+                        ketawa bareng~
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a
+                            href="#commission"
+                            class="px-6 py-3 bg-gradient-to-r from-purple-soft to-pink-soft text-purple-dark font-semibold rounded-full hover:shadow-lg hover:shadow-purple-soft/30 transition-all duration-300 hover:-translate-y-1">
+                            <i class="fa-solid fa-palette mr-2"></i>Lihat Komisi
+                        </a>
+                        <a
+                            href="#gallery"
+                            class="px-6 py-3 border-2 border-purple-soft text-purple-soft font-semibold rounded-full hover:bg-purple-soft hover:text-purple-dark transition-all duration-300 hover:-translate-y-1">
+                            <i class="fa-solid fa-images mr-2"></i>Gallery Art
+                        </a>
+                    </div>
+                </div>
+                <a
+                    href="#about"
+                    class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+                    <i
+                        class="fa-solid fa-chevron-down text-purple-soft text-2xl"></i>
+                </a>
+            </section>
+
+            <!-- About -->
+            <section
+                id="about"
+                class="py-24 px-8 md:px-16 lg:px-24 bg-gradient-to-b from-gray-900 to-gray-800">
+                <div
+                    class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
+                    <div class="flex-1">
+                        <div
+                            class="rounded-2xl overflow-hidden shadow-2xl border border-purple-soft/20">
+                            <img
+                                src="assets/images/avatar/tomoyoy.png"
+                                alt="Naomi Tomoyoy"
+                                class="w-full h-auto"
+                                loading="lazy" />
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p
+                            class="text-purple-soft font-heading text-sm uppercase tracking-widest mb-2">
+                            Tentang Aku
+                        </p>
+                        <h2
+                            class="font-heading text-3xl md:text-4xl font-bold text-white mb-6">
+                            Naomi Tomoyoy
+                        </h2>
+                        <p class="text-gray-300 leading-relaxed mb-4">
+                            Halo! Aku Naomi, seorang artist dan vtuber yang suka
+                            membuat konten kreatif. Aku spesialis dalam
+                            pembuatan Live2D models, rigging, dan illustration
+                            commission.
+                        </p>
+                        <p class="text-gray-300 leading-relaxed">
+                            Dengan pengalaman bertahun-tahun di dunia digital
+                            art, aku selalu berusaha memberikan hasil terbaik
+                            untuk setiap klien yang bekerja sama denganku.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gallery -->
+            <section
+                id="gallery"
+                class="py-24 px-8 md:px-16 lg:px-24 bg-gray-900">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-16">
+                        <p
+                            class="text-purple-soft font-heading text-sm uppercase tracking-widest mb-2">
+                            Portfolio
+                        </p>
+                        <h2
+                            class="font-heading text-3xl md:text-4xl font-bold text-white">
+                            Gallery Art
+                        </h2>
+                        <div
+                            class="w-16 h-1 bg-gradient-to-r from-purple-soft to-pink-soft mx-auto mt-4 rounded"></div>
+                    </div>
+                    <div
+                        class="flex flex-wrap justify-center gap-6"
+                        id="gallery-grid">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Commission -->
+            <section
+                id="commission"
+                class="py-24 px-8 md:px-16 lg:px-24 bg-gradient-to-b from-gray-800 to-gray-900">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-12">
+                        <p
+                            class="text-purple-soft font-heading text-sm uppercase tracking-widest mb-2">
+                            Services
+                        </p>
+                        <h2
+                            class="font-heading text-3xl md:text-4xl font-bold text-white">
+                            Commission
+                        </h2>
+                        <div
+                            class="w-16 h-1 bg-gradient-to-r from-purple-soft to-pink-soft mx-auto mt-4 rounded"></div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="flex flex-wrap justify-center gap-3 mb-12">
+                        <button
+                            class="tab-btn px-5 py-2 rounded-full border-2 border-gray-600 text-gray-400 font-medium text-sm hover:border-purple-soft hover:bg-purple-soft hover:text-purple-dark transition-all duration-300 active"
+                            data-tab="l2d">
+                            L2D
+                        </button>
+                        <button
+                            class="tab-btn px-5 py-2 rounded-full border-2 border-gray-600 text-gray-400 font-medium text-sm hover:border-purple-soft hover:bg-purple-soft hover:text-purple-dark transition-all duration-300"
+                            data-tab="rigging">
+                            Rigging
+                        </button>
+                        <button
+                            class="tab-btn px-5 py-2 rounded-full border-2 border-gray-600 text-gray-400 font-medium text-sm hover:border-purple-soft hover:bg-purple-soft hover:text-purple-dark transition-all duration-300"
+                            data-tab="illustration">
+                            Illustration
+                        </button>
+                        <button
+                            class="tab-btn px-5 py-2 rounded-full border-2 border-gray-600 text-gray-400 font-medium text-sm hover:border-purple-soft hover:bg-purple-soft hover:text-purple-dark transition-all duration-300"
+                            data-tab="thumbnails">
+                            Thumbnails
+                        </button>
+                    </div>
+
+                    <!-- L2D -->
+                    <div
+                        id="l2d"
+                        class="commission-content">
+                        <div class="flex flex-wrap justify-center gap-6">
+                            <div
+                                class="bg-white rounded-2xl overflow-hidden shadow-lg w-full md:w-80 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                                <div class="flex bg-gray-100">
+                                    <img
+                                        src="assets/images/l2d/L2D-HalfBody-1.png"
+                                        alt="L2D Half Body 1"
+                                        class="w-1/2 h-52 object-contain p-2"
+                                        loading="lazy" />
+                                    <img
+                                        src="assets/images/l2d/L2D-HalfBody-2.png"
+                                        alt="L2D Half Body 2"
+                                        class="w-1/2 h-52 object-contain p-2"
+                                        loading="lazy" />
+                                </div>
+                                <div
+                                    class="p-4 text-center border-t border-gray-200">
+                                    <h3
+                                        class="font-heading text-lg font-bold text-gray-800">
+                                        Half Body
+                                    </h3>
+                                    <p
+                                        class="text-purple-deep font-bold text-xl">
+                                        Rp 500.000
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl overflow-hidden shadow-lg w-full md:w-80 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                                <div class="flex bg-gray-100">
+                                    <img
+                                        src="assets/images/l2d/L2D-FullBody-1.png"
+                                        alt="L2D Full Body 1"
+                                        class="w-1/2 h-52 object-contain p-2"
+                                        loading="lazy" />
+                                    <img
+                                        src="assets/images/l2d/L2D-FullBody-2.png"
+                                        alt="L2D Full Body 2"
+                                        class="w-1/2 h-52 object-contain p-2"
+                                        loading="lazy" />
+                                </div>
+                                <div
+                                    class="p-4 text-center border-t border-gray-200">
+                                    <h3
+                                        class="font-heading text-lg font-bold text-gray-800">
+                                        Full Body
+                                    </h3>
+                                    <p
+                                        class="text-purple-deep font-bold text-xl">
+                                        Rp 650.000
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rigging -->
+                    <div
+                        id="rigging"
+                        class="commission-content hidden">
+                        <div class="flex flex-wrap justify-center gap-6">
+                            <div
+                                class="bg-white rounded-2xl p-6 shadow-lg w-full md:w-80 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                                <div
+                                    class="text-center mb-4 pb-4 border-b-2 border-dashed border-gray-200">
+                                    <h3
+                                        class="font-heading text-xl font-bold text-purple-deep">
+                                        Tier 1
+                                    </h3>
+                                    <div class="flex justify-around mt-3">
+                                        <div>
+                                            <p class="text-gray-500 text-xs">
+                                                Half Body
+                                            </p>
+                                            <p
+                                                class="text-purple-deep font-bold">
+                                                300k
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-500 text-xs">
+                                                Full Body
+                                            </p>
+                                            <p
+                                                class="text-purple-deep font-bold">
+                                                400k
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="space-y-2">
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Angle & Body X, Y
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Physics Standar
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Free 3 Emot
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Aye Open & Smile
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Aye Ball X, Y
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Breath
+                                    </li>
+                                </ul>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl p-6 shadow-lg w-full md:w-80 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                                <div
+                                    class="text-center mb-4 pb-4 border-b-2 border-dashed border-gray-200">
+                                    <h3
+                                        class="font-heading text-xl font-bold text-purple-deep">
+                                        Tier 2
+                                    </h3>
+                                    <div class="flex justify-around mt-3">
+                                        <div>
+                                            <p class="text-gray-500 text-xs">
+                                                Half Body
+                                            </p>
+                                            <p
+                                                class="text-purple-deep font-bold">
+                                                450k
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-500 text-xs">
+                                                Full Body
+                                            </p>
+                                            <p
+                                                class="text-purple-deep font-bold">
+                                                550k
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="space-y-2">
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Angle & Body X, Y, Z
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Aye Open & Smile
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Mouth
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Breath
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Physic Premium
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Aye Ball Physic
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Hand Physic
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Aye Ball X, Y
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-sm text-gray-700">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-xs"></i
+                                        >Additional Emot
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center gap-3 mt-6 px-4 py-3 bg-amber-50 border border-amber-300 rounded-lg">
+                            <i class="fa-solid fa-circle-info text-amber-500 text-lg"></i>
+                            <p class="text-amber-700 text-sm font-medium">
+                                Terdapat penambahan biaya untuk tambahan item lain,
+                                harga bisa DM~
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Illustration -->
+                    <div
+                        id="illustration"
+                        class="commission-content hidden">
+                        <div class="flex flex-wrap justify-center gap-6">
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-lg w-full sm:w-56 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-center">
+                                <h3
+                                    class="font-heading text-lg font-bold text-gray-800 mb-2">
+                                    Bust Up
+                                </h3>
+                                <p
+                                    class="text-purple-deep font-bold text-lg mb-3 pb-3 border-b-2 border-dashed border-gray-200">
+                                    Rp 50.000
+                                </p>
+                                <ul class="space-y-1 text-left">
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >1 Character
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >2x Revisi
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >JPG / PNG Format
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >Pengerjaan 3–7 hari
+                                    </li>
+                                </ul>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-lg w-full sm:w-56 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-center">
+                                <h3
+                                    class="font-heading text-lg font-bold text-gray-800 mb-2">
+                                    Half Body
+                                </h3>
+                                <p
+                                    class="text-purple-deep font-bold text-lg mb-3 pb-3 border-b-2 border-dashed border-gray-200">
+                                    Rp 85.000
+                                </p>
+                                <ul class="space-y-1 text-left">
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >1 Character
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >2x Revisi
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >JPG / PNG Format
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >Pengerjaan 3–7 hari
+                                    </li>
+                                </ul>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-lg w-full sm:w-56 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-center">
+                                <h3
+                                    class="font-heading text-lg font-bold text-gray-800 mb-2">
+                                    Full Body
+                                </h3>
+                                <p
+                                    class="text-purple-deep font-bold text-lg mb-3 pb-3 border-b-2 border-dashed border-gray-200">
+                                    Rp 120.000
+                                </p>
+                                <ul class="space-y-1 text-left">
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >1 Character
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >2x Revisi
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >JPG / PNG Format
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >Pengerjaan 4–9 hari
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thumbnails -->
+                    <div
+                        id="thumbnails"
+                        class="commission-content hidden">
+                        <div class="flex flex-wrap justify-center gap-6">
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-lg w-full sm:w-56 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-center">
+                                <h3
+                                    class="font-heading text-lg font-bold text-gray-800 mb-2">
+                                    Bundle A
+                                </h3>
+                                <p
+                                    class="text-purple-deep font-bold text-lg mb-3 pb-3 border-b-2 border-dashed border-gray-200">
+                                    Rp 75.000
+                                </p>
+                                <ul class="space-y-1 text-left">
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >1 Thumbnail
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >2x Revisi
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >JPG / PNG Format
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >Pengerjaan 1–2 hari
+                                    </li>
+                                </ul>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-lg w-full sm:w-56 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-center">
+                                <h3
+                                    class="font-heading text-lg font-bold text-gray-800 mb-2">
+                                    Bundle B
+                                </h3>
+                                <p
+                                    class="text-purple-deep font-bold text-lg mb-3 pb-3 border-b-2 border-dashed border-gray-200">
+                                    Rp 200.000
+                                </p>
+                                <ul class="space-y-1 text-left">
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >3 Thumbnail
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >2x Revisi
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >JPG / PNG Format
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >Pengerjaan 3–5 hari
+                                    </li>
+                                </ul>
+                            </div>
+                            <div
+                                class="bg-white rounded-2xl p-5 shadow-lg w-full sm:w-56 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 text-center">
+                                <h3
+                                    class="font-heading text-lg font-bold text-gray-800 mb-2">
+                                    Bundle C
+                                </h3>
+                                <p
+                                    class="text-purple-deep font-bold text-lg mb-3 pb-3 border-b-2 border-dashed border-gray-200">
+                                    Rp 300.000
+                                </p>
+                                <ul class="space-y-1 text-left">
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >5 Thumbnail
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >2x Revisi
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >JPG / PNG Format
+                                    </li>
+                                    <li
+                                        class="flex items-center gap-2 text-xs text-gray-600">
+                                        <i
+                                            class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                        >Pengerjaan 7–10 hari
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SOP & Spesifikasi -->
+                    <div class="flex flex-wrap gap-6 mt-12">
+                        <div
+                            class="flex-1 min-w-[280px] bg-white rounded-2xl p-5 shadow-lg border-l-4 border-purple-deep">
+                            <h3
+                                class="font-heading text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <i
+                                    class="fa-solid fa-clipboard-list text-purple-deep"></i>
+                                SOP
+                            </h3>
+                            <ol
+                                class="space-y-1 pl-4 list-decimal text-xs text-gray-600">
+                                <li>
+                                    Klien menghubungi Naomi Tomoyoy melalui
+                                    platform yang ditentukan (Instagram,
+                                    Discord).
+                                </li>
+                                <li>
+                                    Klien menyampaikan kebutuhan dan preferensi
+                                    desain L2D & Rigging.
+                                </li>
+                                <li>
+                                    Naomi Tomoyoy memberikan penawaran harga dan
+                                    waktu pengerjaan.
+                                </li>
+                                <li>
+                                    DP awal sebanyak
+                                    <span class="text-purple-deep font-semibold"
+                                        >50%</span
+                                    >, jika sudah DP
+                                    <span class="text-purple-deep font-semibold"
+                                        >tidak bisa Refund</span
+                                    >.
+                                </li>
+                                <li>
+                                    Client melakukan pelunasan setelah desain
+                                    selesai.
+                                </li>
+                                <li>
+                                    L2D akan dikirimkan dalam bentuk format yang
+                                    diminta setelah pelunasan.
+                                </li>
+                                <li>
+                                    Jika L2D diprivasi, harap dikonfirmasi dari
+                                    awal pengerjaan.
+                                </li>
+                                <li>
+                                    Maksimal revisi
+                                    <span class="text-purple-deep font-semibold"
+                                        >3x</span
+                                    >, jika lebih akan ada biaya tambahan.
+                                </li>
+                            </ol>
+                        </div>
+                        <div
+                            class="flex-1 min-w-[280px] bg-white rounded-2xl p-5 shadow-lg border-l-4 border-purple-deep">
+                            <h3
+                                class="font-heading text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <i
+                                    class="fa-solid fa-file-circle-check text-purple-deep"></i>
+                                Spesifikasi L2D
+                            </h3>
+                            <ul class="space-y-1 pl-4 text-xs text-gray-600">
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    >Format
+                                    <span class="text-purple-deep font-semibold"
+                                        >PNG / PSD</span
+                                    >
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    ><span
+                                        class="text-purple-deep font-semibold"
+                                        >Full Color</span
+                                    >
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    >Sesuai permintaan client
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    >Pengerjaan
+                                    <span class="text-purple-deep font-semibold"
+                                        >1–2 bulan</span
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                        <div
+                            class="flex-1 min-w-[280px] bg-white rounded-2xl p-5 shadow-lg border-l-4 border-purple-deep">
+                            <h3
+                                class="font-heading text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <i
+                                    class="fa-solid fa-file-circle-check text-purple-deep"></i>
+                                Spesifikasi Rigging
+                            </h3>
+                            <ul class="space-y-1 pl-4 text-xs text-gray-600">
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    >Sudah diatur emot siap pakai
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    >Dikirimi melalui
+                                    <span class="text-purple-deep font-semibold"
+                                        >G Drive</span
+                                    >
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    >Sesuai permintaan client
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    >Pengerjaan
+                                    <span class="text-purple-deep font-semibold"
+                                        >3 Minggu</span
+                                    >
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i
+                                        class="fa-solid fa-check text-purple-deep text-[10px]"></i
+                                    >Pengerjaan sesuai antrian
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Links -->
+            <section
+                id="links"
+                class="py-24 px-8 md:px-16 lg:px-24 bg-gray-900">
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-12">
+                        <p
+                            class="text-purple-soft font-heading text-sm uppercase tracking-widest mb-2">
+                            Connect
+                        </p>
+                        <h2
+                            class="font-heading text-3xl md:text-4xl font-bold text-white">
+                            Social Links
+                        </h2>
+                        <div
+                            class="w-16 h-1 bg-gradient-to-r from-purple-soft to-pink-soft mx-auto mt-4 rounded"></div>
+                    </div>
+                    <div
+                        class="flex flex-col gap-3"
+                        id="links-container">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="py-8 px-8 text-center border-t border-gray-800">
+            <p class="text-gray-500 text-sm">
+                &copy; <span id="year"></span> Naomi Tomoyoy. Made with
+                <span class="text-pink-soft">💜</span> by STUNT
+            </p>
+        </footer>
+
+        <!-- Lightbox -->
+        <div class="lightbox">
+            <span class="lightbox-close">&times;</span>
+            <img
+                src=""
+                alt="Full View" />
+        </div>
+
+        <script>
+            // Links Data
+            const linksData = [
+                {
+                    name: "Saweria",
+                    url: "https://saweria.co/naomitomoyoy",
+                    icon: "fa-solid fa-heart",
+                },
+                {
+                    name: "Trakteer",
+                    url: "https://trakteer.id/tomoyoy",
+                    icon: "fa-solid fa-mug-hot",
+                },
+                {
+                    name: "Discord",
+                    url: "https://discord.gg/Z3AnXVUuak",
+                    icon: "fa-brands fa-discord",
+                },
+                {
+                    name: "YouTube",
+                    url: "https://www.youtube.com/@tomoyoy_oy",
+                    icon: "fa-brands fa-youtube",
+                },
+                {
+                    name: "Instagram",
+                    url: "https://www.instagram.com/naomi_tomoyoy",
+                    icon: "fa-brands fa-instagram",
+                },
+                {
+                    name: "TikTok",
+                    url: "https://www.tiktok.com/@moyoy.oy",
+                    icon: "fa-brands fa-tiktok",
+                },
+                {
+                    name: "SoundCloud",
+                    url: "https://soundcloud.com/naomi-tomoyoy",
+                    icon: "fa-brands fa-soundcloud",
+                },
+                {
+                    name: "Spotify",
+                    url: "https://open.spotify.com/user/31oqoygzqrxjco3apycvxayazdkq",
+                    icon: "fa-brands fa-spotify",
+                },
+                {
+                    name: "X (Twitter)",
+                    url: "https://x.com/naothara_sella",
+                    icon: "fa-brands fa-x-twitter",
+                },
+            ];
+
+            // Gallery Data
+            const galleryData = [
+                {
+                    src: "assets/images/gallery/1000024087.png",
+                    title: "Artwork 1",
+                },
+                {
+                    src: "assets/images/gallery/1000051138.png",
+                    title: "Artwork 2",
+                },
+                {
+                    src: "assets/images/gallery/1000051139.png",
+                    title: "Artwork 3",
+                },
+                {
+                    src: "assets/images/gallery/1000051142.png",
+                    title: "Artwork 4",
+                },
+                {
+                    src: "assets/images/gallery/1000051143.png",
+                    title: "Artwork 5",
+                },
+                {
+                    src: "assets/images/gallery/1000062660.png",
+                    title: "Artwork 6",
+                },
+                {
+                    src: "assets/images/gallery/1000069002.png",
+                    title: "Artwork 7",
+                },
+                {
+                    src: "assets/images/gallery/1000069450.png",
+                    title: "Artwork 8",
+                },
+                {
+                    src: "assets/images/gallery/1000260696.png",
+                    title: "Artwork 9",
+                },
+                {
+                    src: "assets/images/gallery/1000260708.png",
+                    title: "Artwork 10",
+                },
+                {
+                    src: "assets/images/gallery/1000333043.png",
+                    title: "Artwork 11",
+                },
+                {
+                    src: "assets/images/gallery/1000333044.png",
+                    title: "Artwork 12",
+                },
+                {
+                    src: "assets/images/gallery/1000333048.png",
+                    title: "Artwork 13",
+                },
+                {
+                    src: "assets/images/gallery/1000333049.png",
+                    title: "Artwork 14",
+                },
+            ];
+
+            // Render Gallery
+            const galleryGrid = document.getElementById("gallery-grid");
+            galleryData.forEach((item) => {
+                const div = document.createElement("div");
+                div.className = "gallery-item flex-none w-[280px] md:w-[320px]";
+                div.innerHTML = `
+          <img src="${item.src}" alt="${item.title}" loading="lazy" />
+          <div class="gallery-overlay">
+            <div>
+              <h4 class="text-white font-heading font-bold">${item.title}</h4>
+              <p class="text-gray-300 text-xs">View Full Size</p>
+            </div>
+          </div>
+        `;
+                galleryGrid.appendChild(div);
+            });
+
+            // Render Links
+            const linksContainer = document.getElementById("links-container");
+            linksData.forEach((link) => {
+                const a = document.createElement("a");
+                a.href = link.url;
+                a.target = "_blank";
+                a.rel = "noopener noreferrer";
+                a.className =
+                    "flex items-center gap-4 px-6 py-4 bg-white/5 rounded-full border border-white/10 hover:bg-purple-soft/10 hover:border-purple-soft transition-all duration-300 hover:translate-x-2";
+                a.innerHTML = `<i class="${link.icon} text-purple-soft w-5 text-center"></i><span class="text-gray-200 font-medium">${link.name}</span>`;
+                linksContainer.appendChild(a);
+            });
+
+            // Year
+            document.getElementById("year").textContent =
+                new Date().getFullYear();
+
+            // Loader
+            window.addEventListener("load", () => {
+                setTimeout(
+                    () =>
+                        document
+                            .querySelector(".loader")
+                            .classList.add("hidden"),
+                    1000,
+                );
+            });
+
+            // Navbar scroll
+            window.addEventListener("scroll", () => {
+                const nav = document.getElementById("navbar");
+                nav.classList.toggle("bg-gray-900/95", window.scrollY > 50);
+                nav.classList.toggle("backdrop-blur", window.scrollY > 50);
+                nav.classList.toggle("shadow-lg", window.scrollY > 50);
+            });
+
+            // Tabs
+            document.querySelectorAll(".tab-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    document
+                        .querySelectorAll(".tab-btn")
+                        .forEach((b) =>
+                            b.classList.remove(
+                                "active",
+                                "bg-purple-soft",
+                                "text-purple-dark",
+                                "border-purple-soft",
+                            ),
+                        );
+                    document
+                        .querySelectorAll(".commission-content")
+                        .forEach((c) => c.classList.add("hidden"));
+                    btn.classList.add(
+                        "active",
+                        "bg-purple-soft",
+                        "text-purple-dark",
+                        "border-purple-soft",
+                    );
+                    btn.classList.remove("border-gray-600", "text-gray-400");
+                    document
+                        .getElementById(btn.dataset.tab)
+                        .classList.remove("hidden");
+                });
+            });
+
+            // Lightbox
+            const lightbox = document.querySelector(".lightbox");
+            document.addEventListener("click", (e) => {
+                if (e.target.closest(".gallery-item")) {
+                    const img = e.target
+                        .closest(".gallery-item")
+                        .querySelector("img");
+                    lightbox.querySelector("img").src = img.src;
+                    lightbox.classList.add("active");
+                    document.body.style.overflow = "hidden";
+                }
+            });
+            lightbox.addEventListener("click", (e) => {
+                if (
+                    e.target === lightbox ||
+                    e.target.classList.contains("lightbox-close")
+                ) {
+                    lightbox.classList.remove("active");
+                    document.body.style.overflow = "";
+                }
+            });
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    lightbox.classList.remove("active");
+                    document.body.style.overflow = "";
+                }
+            });
+
+            // Cursor
+            const cursor = document.querySelector(".cursor");
+            if (cursor && window.innerWidth > 768) {
+                document.addEventListener("mousemove", (e) => {
+                    cursor.style.left = e.clientX + "px";
+                    cursor.style.top = e.clientY + "px";
+                });
+                document
+                    .querySelectorAll("a, button, .gallery-item")
+                    .forEach((el) => {
+                        el.addEventListener("mouseenter", () =>
+                            cursor.classList.add("hover"),
+                        );
+                        el.addEventListener("mouseleave", () =>
+                            cursor.classList.remove("hover"),
+                        );
+                    });
+            }
+
+            // Parallax gallery
+            window.addEventListener("scroll", () => {
+                document
+                    .querySelectorAll(".gallery-item")
+                    .forEach((item, i) => {
+                        const rect = item.getBoundingClientRect();
+                        if (rect.top < window.innerHeight && rect.bottom > 0) {
+                            const offset =
+                                (rect.top - window.innerHeight / 2) *
+                                (i % 3 === 0
+                                    ? 0.02
+                                    : i % 3 === 1
+                                      ? -0.015
+                                      : 0.025);
+                            item.style.transform = `translateY(${offset}px)`;
+                        }
+                    });
+            });
+        </script>
+        <script src="js/three-scene.js"></script>
+    </body>
+</html>
